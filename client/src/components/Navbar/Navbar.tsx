@@ -19,7 +19,7 @@ const Navbar = () => {
     `px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ease-in-out
      ${
        isActive
-         ? 'bg-[var(--color-amd-red)] text-[var(--color-text-primary)]'
+         ? 'bg-[var(--color-amd-red)] text-[var(--color-text-primary) hover:bg-[var(--color-amd-red-darkest)] '
          : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-text-primary)]'
      }`;
 
@@ -42,7 +42,6 @@ const Navbar = () => {
           <Link to="/" className="flex-shrink-0 flex items-center">
             <SiAmd className="h-8 w-8 md:h-10 md:w-10 text-[var(--color-amd-red)]" />
             <span className="ml-2 md:ml-3 text-xl md:text-2xl font-bold">
-              <span className="text-[var(--color-amd-red)]">AMD</span>
               <span className="text-[var(--color-text-primary)]"> PCStore</span>
             </span>
           </Link>

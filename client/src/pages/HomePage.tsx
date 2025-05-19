@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; 
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { SiAmd } from 'react-icons/si';
@@ -7,7 +7,7 @@ import { SiAmd } from 'react-icons/si';
 import HeroBackgroundVideo from '../assets/videos/hero-background.mp4';
 import ryzenLogo from '../assets/images/amd-ryzen-logo.png';
 import radeonLogo from '../assets/images/amd-radeon-logo.png';
-import AnimatedPercentageCircle from '../components/AnimatedPercentageCircle'; 
+import AnimatedPercentageCircle from '../components/AnimatedPercentageCircle';
 
 interface ProductFeatureData {
   id: string;
@@ -16,8 +16,8 @@ interface ProductFeatureData {
   logo: string;
   alt: string;
   linkText: string;
-  linkTo: string;
-  hoverText: string; 
+  linkTo: string; 
+  hoverText: string;
 }
 
 const ProductFeatureCard: React.FC<{ feature: ProductFeatureData, index: number }> = ({ feature, index }) => {
@@ -48,7 +48,7 @@ const ProductFeatureCard: React.FC<{ feature: ProductFeatureData, index: number 
     textInitialValue: isRyzen ? 0 : 60,
     textFinalValue: isRyzen ? 100 : 240,
     textSuffix: isRyzen ? "%" : " FPS",
-    textSize: isRyzen ? "text-4xl" : "text-3xl", 
+    textSize: isRyzen ? "text-4xl" : "text-3xl",
   };
 
   return (
@@ -62,7 +62,6 @@ const ProductFeatureCard: React.FC<{ feature: ProductFeatureData, index: number 
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
-      {/* Contenedor de Imagen y Overlay Animado */}
       <div className="relative w-full md:w-2/5 flex justify-center items-center h-52 sm:h-64 md:h-72">
         <motion.div
           variants={imageVariants}
@@ -75,7 +74,6 @@ const ProductFeatureCard: React.FC<{ feature: ProductFeatureData, index: number 
             className="max-h-40 sm:max-h-52 md:max-h-64 object-contain"
           />
         </motion.div>
-
         <AnimatePresence>
           {isHovered && (
             <motion.div
@@ -86,13 +84,12 @@ const ProductFeatureCard: React.FC<{ feature: ProductFeatureData, index: number 
               className="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
             >
               <AnimatedPercentageCircle
-                percentage={100} 
-                size={170}       
+                percentage={100}
+                size={170}
                 strokeWidth={8}
-                duration={1.2}   
-                {...textAnimationProps} 
+                duration={1.2}
+                {...textAnimationProps}
               />
-              {/* Texto  debajo del círculo y el número */}
               <p className="mt-3 text-xs font-medium text-[var(--color-text-secondary)] max-w-[180px]">
                 {feature.hoverText}
               </p>
@@ -100,8 +97,6 @@ const ProductFeatureCard: React.FC<{ feature: ProductFeatureData, index: number 
           )}
         </AnimatePresence>
       </div>
-
-      {/* Contenido de Texto */}
       <div className={`w-full md:w-3/5 text-center ${index % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
         <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--color-text-primary)] mb-4">
           {feature.name}
@@ -109,9 +104,9 @@ const ProductFeatureCard: React.FC<{ feature: ProductFeatureData, index: number 
         <p className="text-[var(--color-text-secondary)] text-base sm:text-lg leading-relaxed mb-8">
           {feature.description}
         </p>
-        <Link
-          to={feature.linkTo}
-          className="inline-block px-8 py-3 bg-[var(--color-amd-red)] text-[var(--color-text-primary)] text-base font-semibold rounded-[var(--border-radius-default)] shadow-lg hover:bg-[var(--color-amd-red-darker)] transition-colors duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[var(--color-amd-red)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-primary)]"
+        <Link  
+          to={feature.linkTo} 
+          className="inline-block px-8 py-3 bg-[var(--color-amd-red)] text-[var(--color-text-primary)] text-base font-semibold rounded-[var(--border-radius-default)] shadow-lg hover:bg-[var(--color-amd-red-darkest)] transition-colors duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[var(--color-amd-red)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-primary)]"
         >
           {feature.linkText}
         </Link>
@@ -129,8 +124,8 @@ const AmdProductsSection = () => {
       logo: ryzenLogo,
       alt: "Logo AMD Ryzen",
       linkText: "Descubrir Ryzen",
-      linkTo: "/products?type=cpu",
-      hoverText: "Aumenta tu productividad con hasta 24 hilos de procesamiento." 
+      linkTo: "/products?type=CPU", 
+      hoverText: "Aumenta tu productividad con hasta 24 hilos de procesamiento."
     },
     {
       id: "radeon",
@@ -139,8 +134,8 @@ const AmdProductsSection = () => {
       logo: radeonLogo,
       alt: "Logo AMD Radeon Graphics",
       linkText: "Explorar Radeon",
-      linkTo: "/products?type=gpu",
-      hoverText: "Experimenta un aumento de hasta el 100% en tus FPS en juegos seleccionados." 
+      linkTo: "/products?type=GPU", 
+      hoverText: "Experimenta un aumento de hasta el 100% en tus FPS en juegos seleccionados."
     },
   ];
 
@@ -156,7 +151,6 @@ const AmdProductsSection = () => {
         >
           <span className="text-[var(--color-amd-red)]">Potencia</span> para Cada Necesidad
         </motion.h2>
-        
         <div className="space-y-20 md:space-y-28">
           {productFeaturesData.map((feature, index) => (
             <ProductFeatureCard key={feature.id} feature={feature} index={index} />
@@ -170,6 +164,7 @@ const AmdProductsSection = () => {
 const HomePage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const navigate = useNavigate(); 
 
   const togglePlayPause = () => {
     if (videoRef.current) {
@@ -185,7 +180,6 @@ const HomePage = () => {
 
   return (
     <>
-      {/* Sección Hero / Fondo */}
       <section className="relative h-[100vh] flex items-center justify-start overflow-hidden w-full">
         <video
           ref={videoRef}
@@ -197,7 +191,6 @@ const HomePage = () => {
           playsInline
         />
         <div className="absolute top-0 left-0 w-full h-full bg-black/70 z-10"></div>
-
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <motion.div
             className="max-w-lg md:max-w-xl text-left"
@@ -213,15 +206,15 @@ const HomePage = () => {
               Explora componentes AMD de última generación. Rendimiento sin compromisos para tu PC ideal.
             </p>
             <motion.button
-              className="mt-10 px-8 py-3 bg-[var(--color-amd-red)] text-[var(--color-text-primary)] text-lg font-semibold rounded-[var(--border-radius-default)] shadow-md hover:bg-[var(--color-amd-red-darker)] transition-colors duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[var(--color-amd-red)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-primary)]"
+              className="mt-10 px-8 py-3 bg-[var(--color-amd-red)] text-[var(--color-text-primary)] text-lg font-semibold rounded-[var(--border-radius-default)] shadow-md hover:bg-[var(--color-amd-red-darkest)] transition-colors duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[var(--color-amd-red)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-primary)]"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/products')} 
             >
               Explorar Productos
             </motion.button>
           </motion.div>
         </div>
-
         <button
           onClick={togglePlayPause}
           className="absolute bottom-6 right-6 z-20 bg-black/60 text-white p-3 rounded-full hover:bg-black/80 transition-colors"
@@ -230,7 +223,6 @@ const HomePage = () => {
           {isVideoPlaying ? <FaPause size={18} /> : <FaPlay size={18} />}
         </button>
       </section>
-
       <div className="w-full h-1 bg-gradient-to-r from-transparent via-[var(--color-amd-red)] to-transparent"></div>
       <AmdProductsSection />
     </>

@@ -6,7 +6,8 @@
   /* Paleta de Colores Grises Oscuros y Acentos */
   --color-amd-red: #ED1C24;         /* Rojo AMD Oficial */
   --color-amd-red-darker: #C4141B;  /* Un rojo más oscuro para hovers o acentos secundarios */
-  
+  --color-amd-red-darkest: #530f00;  /* Un rojo más oscuro para hovers o acentos secundarios */
+
   /* Grises oscuros puros */
   --color-bg-primary: #18181B;     /* Zinc 900 - Muy oscuro, casi negro */
   --color-bg-secondary: #27272A;   /* Zinc 800 - Para tarjetas, secciones */

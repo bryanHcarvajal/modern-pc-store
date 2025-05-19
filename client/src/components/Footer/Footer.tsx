@@ -6,9 +6,9 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-    { href: "https://github.com", icon: FaGithub, label: "GitHub" },
+    { href: "https://github.com/bryanHcarvajal", icon: FaGithub, label: "GitHub" },
     { href: "https://linkedin.com", icon: FaLinkedin, label: "LinkedIn" },
-    { href: "https://twitter.com", icon: FaTwitter, label: "Twitter" },
+    { href: "https://x.com/AMD", icon: FaTwitter, label: "Twitter" },
   ];
 
   return (
@@ -27,7 +27,7 @@ const Footer = () => {
             <p className="text-sm">
               Tu destino para los componentes AMD más avanzados.
             </p>
-            <p className="text-xs">© {currentYear} AMD PCStore. Todos los derechos reservados.</p>
+            <p className="text-xs">© {currentYear} AMD PCStore.</p>
           </div>
 
           {/* Enlaces Rápidos */}
