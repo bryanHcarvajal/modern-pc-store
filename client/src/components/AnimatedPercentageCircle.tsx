@@ -43,7 +43,6 @@ const AnimatedPercentageCircle: React.FC<AnimatedPercentageCircleProps> = ({
     },
   };
 
-  // Animación del texto
   const animatedNumericValue = useMotionValue(textInitialValue);
   const displayedText = useTransform(animatedNumericValue, (latest) => {
     return `${Math.round(latest)}${textSuffix}`;
@@ -62,7 +61,6 @@ const AnimatedPercentageCircle: React.FC<AnimatedPercentageCircleProps> = ({
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transform -rotate-90">
-        {/* Track del círculo */}
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -71,7 +69,6 @@ const AnimatedPercentageCircle: React.FC<AnimatedPercentageCircleProps> = ({
           strokeWidth={strokeWidth}
           fill="transparent"
         />
-        {/* Círculo de progreso animado */}
         <motion.circle
           cx={size / 2}
           cy={size / 2}
@@ -87,7 +84,6 @@ const AnimatedPercentageCircle: React.FC<AnimatedPercentageCircleProps> = ({
           animate="visible"
         />
       </svg>
-      {/* Texto animado superpuesto */}
       {animateText && (
         <motion.div
           className={`absolute inset-0 flex items-center justify-center font-bold ${textSize}`}

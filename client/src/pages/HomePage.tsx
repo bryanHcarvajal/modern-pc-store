@@ -24,7 +24,7 @@ const ProductFeatureCard: React.FC<{ feature: ProductFeatureData, index: number 
   const [isHovered, setIsHovered] = useState(false);
 
   const cardVariants = {
-    initial: { opacity: 0, x: index % 2 === 0 ? -60 : 60 },
+    initial: { opacity: 0, y: 50 },
     inView: { 
       opacity: 1, 
       x: 0, 
@@ -58,7 +58,7 @@ const ProductFeatureCard: React.FC<{ feature: ProductFeatureData, index: number 
       variants={cardVariants}
       initial="initial"
       whileInView="inView"
-      viewport={{ once: true, amount: 0.25 }}
+      viewport={{ once: false, amount: 0.25 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >

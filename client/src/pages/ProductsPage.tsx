@@ -105,7 +105,7 @@ const ProductsPage = () => {
   }
 
   return (
-    <div className="bg-[var(--color-bg-primary)] py-16 md:py-20 min-h-screen">
+    <div className="bg-[var(--color-bg-primary)] py-16 mt-10 md:py-20 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 md:mb-16">
           <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--color-text-primary)]">

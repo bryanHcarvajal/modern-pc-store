@@ -1,10 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Product } from './product.interface';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common'; 
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ProductEntity } from './entities/product.entity';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
-export class ProductsService {
-  private readonly products: Product[] = [
-    // GPUs AMD
+export class ProductsService implements OnModuleInit { 
+  constructor(
+    @InjectRepository(ProductEntity)
+    private productsRepository: Repository<ProductEntity>,
+  ) {}
+
+  private readonly initialProductsData: Omit<ProductEntity, 'createdAt' | 'updatedAt'>[] = [
     {
       id: 'gpu-rx5700xt',
       name: 'Radeon RX 5700 XT',
@@ -30,9 +38,8 @@ export class ProductsService {
       amdChip: 'Radeon RX 7900 XTX',
       price: 999.99,
       specs: ['24GB GDDR6', 'Diseño Chiplet', 'DisplayPort 2.1'],
-      imageUrl: 'https://static.gigabyte.com/StaticFile/Image/Global/ffebdb331cdc6e8eecf7f2b4b42b8232/Product/32793',
+      imageUrl: 'https://static.gigabyte.com/StaticFile/Image/Global/ffebdb331cdc6e8eecf7f2b4b42b8232/Product/32793', // URL actualizada, la anterior era 403
     },
-    // CPUs AMD
     {
       id: 'cpu-r5-7600x',
       name: 'AMD Ryzen 5 7600X',
@@ -62,17 +69,62 @@ export class ProductsService {
     },
   ];
 
-  findAll(): Product[] {
-    return this.products;
-  }
-
-  findOne(id: string): Product {
-    const product = this.products.find(p => p.id === id);
-    if (!product) {
-      throw new NotFoundException(`Producto con ID "${id}" no encontrado`);
+  async onModuleInit() {
+    const count = await this.productsRepository.count();
+    if (count === 0) {
+      console.log('Base de datos de productos vacía, sembrando datos iniciales...');
+      for (const productData of this.initialProductsData) {
+        const product = this.productsRepository.create(productData as ProductEntity);
+        await this.productsRepository.save(product).catch(error => {
+            console.error(`Error al sembrar producto ${productData.id}:`, error.message);
+        });
+      }
+      console.log('Datos iniciales de productos sembrados.');
     }
-    return product;
   }
 
+  async create(createProductDto: CreateProductDto): Promise<ProductEntity> {
 
+    const newProduct = this.productsRepository.create(createProductDto);
+    return this.productsRepository.save(newProduct);
+  }
+
+  async findAll(): Promise<ProductEntity[]> {
+    const products = await this.productsRepository.find();
+    return products.map(product => ({
+        ...product,
+        price: parseFloat(product.price as any),
+    }));
+  }
+
+  async findOne(id: string): Promise<ProductEntity> {
+    const product = await this.productsRepository.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException(`Producto con ID "${id}" no encontrado.`);
+    }
+    return {
+        ...product,
+        price: parseFloat(product.price as any),
+    };
+  }
+
+  async update(id: string, updateProductDto: UpdateProductDto): Promise<ProductEntity> {
+
+    const product = await this.productsRepository.preload({
+      id: id,
+      ...updateProductDto,
+    });
+    if (!product) {
+      throw new NotFoundException(`Producto con ID "${id}" no encontrado para actualizar.`);
+    }
+    return this.productsRepository.save(product);
+  }
+
+  async remove(id: string): Promise<{ message: string, id: string }> {
+    const result = await this.productsRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Producto con ID "${id}" no encontrado para eliminar.`);
+    }
+    return { message: `Producto con ID "${id}" eliminado exitosamente.`, id };
+  }
 }
