@@ -24,21 +24,22 @@ import { OrderItemEntity } from './entities/order-item.entity';
       envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
+      imports: [ConfigModule], 
+      inject: [ConfigService], 
       useFactory: (configService: ConfigService) => {
         const dbHost = configService.get<string>('DB_HOST');
         const dbPort = configService.get<string>('DB_PORT');
         const dbUsername = configService.get<string>('DB_USERNAME');
         const dbPassword = configService.get<string>('DB_PASSWORD');
         const dbDatabase = configService.get<string>('DB_DATABASE');
-        const dbSynchronize = configService.get<string>('DB_SYNCHRONIZE');
+        const dbSynchronize = configService.get<string>('DB_SYNCHRONIZE') === 'true';
+        const nodeEnv = configService.get<string>('NODE_ENV');
 
         if (!dbHost || !dbPort || !dbUsername || !dbDatabase) {
-          throw new Error('Faltan variables de entorno críticas para la base de datos.');
+          throw new Error('Faltan variables de entorno críticas para la base de datos (DB_HOST, DB_PORT, DB_USERNAME, DB_DATABASE).');
         }
 
-        return {
+        const typeOrmConfig: any = { 
           type: 'postgres',
           host: dbHost,
           port: parseInt(dbPort!, 10),
@@ -46,9 +47,17 @@ import { OrderItemEntity } from './entities/order-item.entity';
           password: dbPassword || '', 
           database: dbDatabase!,
           entities: [User, ProductEntity,  CartEntity, CartItemEntity, OrderEntity, OrderItemEntity],
-          synchronize: dbSynchronize === 'true',
-          // logging: true, 
+          synchronize: dbSynchronize, 
         };
+
+        // Configuración SSL específica para producción si es necesario
+        if (nodeEnv === 'production') {
+          typeOrmConfig.ssl = {
+            rejectUnauthorized: false, 
+          };
+        }
+        
+        return typeOrmConfig;
       },
     }),
     ProductsModule,
@@ -57,7 +66,7 @@ import { OrderItemEntity } from './entities/order-item.entity';
     CartModule,
     OrdersModule, 
   ],
-  controllers: [AppController], // <--- SOLO AppController
-  providers: [AppService],      // <--- SOLO AppService
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
