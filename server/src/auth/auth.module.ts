@@ -10,22 +10,20 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     UsersModule,
     ConfigModule, 
     JwtModule.registerAsync({
-      imports: [ConfigModule], 
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        const jwtSecret = configService.get<string>('JWT_SECRET');
-        const jwtExpiration = configService.get<string>('JWT_EXPIRATION_TIME');
+      useFactory: async () => { 
+        const jwtSecret = process.env.JWT_SECRET;
+        const jwtExpiration = process.env.JWT_EXPIRATION_TIME;
 
-        console.log('[AuthModule] JWT_SECRET leído por ConfigService:', jwtSecret);
-        console.log('[AuthModule] JWT_EXPIRATION_TIME leído por ConfigService:', jwtExpiration);
+        console.log('[AuthModule] JWT_SECRET desde process.env:', jwtSecret);
+        console.log('[AuthModule] JWT_EXPIRATION_TIME desde process.env:', jwtExpiration);
 
         if (!jwtSecret) {
-          console.error('[AuthModule] ERROR CRÍTICO: JWT_SECRET es undefined o vacío.');
-          throw new Error('JWT_SECRET no está definido en las variables de entorno.');
+          console.error('[AuthModule] ERROR CRÍTICO: JWT_SECRET (desde process.env) es undefined o vacío.');
+          throw new Error('JWT_SECRET no está definido en las variables de entorno (process.env).');
         }
         if (!jwtExpiration) {
-          console.error('[AuthModule] ERROR CRÍTICO: JWT_EXPIRATION_TIME es undefined o vacío.');
-          throw new Error('JWT_EXPIRATION_TIME no está definido en las variables de entorno.');
+          console.error('[AuthModule] ERROR CRÍTICO: JWT_EXPIRATION_TIME (desde process.env) es undefined o vacío.');
+          throw new Error('JWT_EXPIRATION_TIME no está definido en las variables de entorno (process.env).');
         }
 
         return {
@@ -38,7 +36,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
-  exports: [AuthService, JwtModule],
+  providers: [AuthService], 
+  exports: [AuthService, JwtModule], 
 })
 export class AuthModule {}
