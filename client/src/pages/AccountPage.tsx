@@ -91,7 +91,7 @@ const AccountPage = () => {
         setIsLoadingOrders(true);
         setOrdersError(null);
         try {
-          const response = await fetch('http://localhost:3000/orders', {
+          const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/orders`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             },

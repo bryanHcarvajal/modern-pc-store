@@ -28,7 +28,7 @@ const ProductDetailPage = () => {
       setLoadingProductDetails(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:3000/products/${productId}`);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products/${productId}`);
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({ message: response.statusText }));
           throw new Error(`Error ${response.status}: ${errorData.message || 'No se pudo cargar el producto.'}`);

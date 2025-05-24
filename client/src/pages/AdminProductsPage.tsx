@@ -40,14 +40,13 @@ const AdminProductsPage = () => {
   const [formData, setFormData] = useState<ProductFormData>(initialFormData);
   const [isSubmittingForm, setIsSubmittingForm] = useState(false); 
 
-  const API_BASE_URL = 'http://localhost:3000'; 
 
   // --- Funciones de API ---
   const fetchProducts = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/products`);
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products`);
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
         throw new Error(errData.message || 'Error al cargar productos del servidor.');
@@ -80,7 +79,7 @@ const AdminProductsPage = () => {
      const toastId = toast.loading('Eliminando producto...');
      setIsLoading(true);
      try {
-         const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products/${productId}`, {
              method: 'DELETE',
              headers: { 'Authorization': `Bearer ${token}` },
          });
@@ -160,8 +159,8 @@ const AdminProductsPage = () => {
 
 
     const url = editingProduct 
-      ? `${API_BASE_URL}/products/${editingProduct.id}` 
-      : `${API_BASE_URL}/products`;
+      ? `${import.meta.env.VITE_API_BASE_URLL}/products/${editingProduct.id}` 
+      : `${import.meta.env.VITE_API_BASE_URL}/products`;
     const method = editingProduct ? 'PATCH' : 'POST';
     const successMessage = editingProduct ? 'Producto actualizado con éxito.' : 'Producto creado con éxito.';
     const loadingMessage = editingProduct ? 'Actualizando producto...' : 'Creando producto...';

@@ -52,7 +52,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const API_BASE_URL = 'http://localhost:3000'; 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const makeAuthenticatedRequest = useCallback(async (endpoint: string, options: RequestInit = {}) => {
     if (!token) {

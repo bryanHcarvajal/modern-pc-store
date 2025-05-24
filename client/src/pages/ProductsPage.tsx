@@ -42,7 +42,7 @@ const ProductsPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch('http://localhost:3000/products');
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products`);
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({ message: response.statusText }));
           throw new Error(`Error ${response.status}: ${errorData.message || 'No se pudieron cargar los productos'}`);
@@ -97,9 +97,7 @@ const ProductsPage = () => {
         <FiAlertTriangle className="h-16 w-16 text-[var(--color-amd-red)] mb-6" />
         <p className="text-2xl font-semibold text-[var(--color-text-primary)] mb-3">¡Oops! Algo salió mal</p>
         <p className="text-md text-[var(--color-text-secondary)] mb-2">{error}</p>
-        <p className="text-sm text-[var(--color-text-muted)]">
-          Asegúrate de que el servidor backend esté corriendo en http://localhost:3000 y prueba recargar la página.
-        </p>
+
       </div>
     );
   }

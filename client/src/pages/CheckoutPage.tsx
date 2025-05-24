@@ -40,7 +40,7 @@ const CheckoutPage = () => {
     const toastId = toast.loading('Procesando tu pedido...');
 
     try {
-      const response = await fetch('http://localhost:3000/orders', { 
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/orders`, { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
