@@ -9,12 +9,13 @@ import { User, UserRole } from '../users/entities/user.entity';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  private readonly HARCODED_JWT_SECRET_FOR_DEBUG = '7700194274tetatrio-zcatiplo25'; // <---  SECRETO DE RENDER
+  private readonly HARCODED_JWT_SECRET_FOR_DEBUG = '7700194274tetatrio-zcatiplo25'; // <--- TU SECRETO DE RENDER
 
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    // private configService: ConfigService,
+    // Quitamos ConfigService del constructor para esta prueba de hardcodeo si solo era para el secreto
+    // private configService: ConfigService, 
   ) {}
 
   private cleanUserRolesInPlace(user: User): void {
@@ -25,12 +26,15 @@ export class AuthService {
     this.logger.debug(`AuthService - Entrando a cleanUserRolesInPlace para ${user.email}. Roles actuales: ${JSON.stringify(user.roles)}`);
     if (user.roles && Array.isArray(user.roles)) {
       const originalRoles = [...user.roles];
+      // Convertir a string, quitar llaves y filtrar vacíos, luego asegurar que sean del tipo UserRole (y convertir a mayúsculas)
       const cleanedRoles: UserRole[] = user.roles
-        .map(role => String(role).replace(/[{}]/g, '').toUpperCase().trim())
+        .map(role => String(role).replace(/[{}]/g, '').toUpperCase().trim()) // Limpiar y convertir a mayúsculas
         .filter(role => role.length > 0)
-        .filter(role => Object.values(UserRole).includes(role as UserRole))
+        .filter(role => Object.values(UserRole).includes(role as UserRole)) // Asegurar que sea un rol válido
         .map(role => role as UserRole);
-      user.roles = cleanedRoles.length > 0 ? cleanedRoles : [UserRole.USER];
+
+      user.roles = cleanedRoles.length > 0 ? cleanedRoles : [UserRole.USER]; // Si después de limpiar no queda nada, asignar USER por defecto
+
       this.logger.debug(`AuthService - Roles ANTES (copia): ${JSON.stringify(originalRoles)} -> DESPUÉS (en instancia): ${JSON.stringify(user.roles)} para ${user.email}`);
     } else {
       this.logger.warn(`AuthService - Usuario ${user.email} no tiene 'roles' válidos. Se asignarán roles por defecto [UserRole.USER].`);
@@ -45,7 +49,7 @@ export class AuthService {
     const { password, ...userResult } = userEntity;
     if (!userEntity.roles || userEntity.roles.length === 0) {
         this.logger.error(`CRÍTICO en register: userEntity.roles está vacío o no definido para ${userEntity.email}. Asignando USER por defecto ANTES de firmar token.`);
-        userEntity.roles = [UserRole.USER];
+        userEntity.roles = [UserRole.USER]; // Asegurar que siempre haya roles
     }
     
     const payload = { email: userEntity.email, sub: userEntity.id, roles: userEntity.roles };
@@ -76,7 +80,7 @@ export class AuthService {
     const { password, ...userResult } = userEntity;
     if (!userEntity.roles || userEntity.roles.length === 0) {
         this.logger.error(`CRÍTICO en login: userEntity.roles está vacío o no definido para ${userEntity.email}. Asignando USER por defecto ANTES de firmar token.`);
-        userEntity.roles = [UserRole.USER];
+        userEntity.roles = [UserRole.USER]; // Asegurar que siempre haya roles
     }
     
     const payload = { email: userEntity.email, sub: userEntity.id, roles: userEntity.roles };

@@ -1,6 +1,7 @@
 import { Injectable, ExecutionContext, UnauthorizedException, CanActivate, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-
+// ConfigService ya no es necesario aquí para el secreto en esta prueba
+// import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -9,6 +10,8 @@ export class JwtAuthGuard implements CanActivate {
 
   constructor(
     private jwtService: JwtService,
+    // Quitamos ConfigService del constructor para esta prueba de hardcodeo
+    // private configService: ConfigService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -24,6 +27,7 @@ export class JwtAuthGuard implements CanActivate {
     this.logger.debug(`[JwtAuthGuard] Token recibido para verificar: ${token}`);
 
     try {
+      // VERIFICA EXPLÍCITAMENTE con el secreto hardcodeado
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.HARCODED_JWT_SECRET_FOR_DEBUG,
       });
@@ -33,7 +37,7 @@ export class JwtAuthGuard implements CanActivate {
       this.logger.error(`[JwtAuthGuard] Error al verificar token (con secreto hardcodeado). Error: ${e.name} - ${e.message}`);
       if (e.name === 'TokenExpiredError') {
         throw new UnauthorizedException('Token ha expirado.');
-      } else if (e.name === 'JsonWebTokenError') {
+      } else if (e.name === 'JsonWebTokenError') { // Cubre 'invalid signature', 'jwt malformed', etc.
         throw new UnauthorizedException('Token inválido.');
       } else {
         throw new UnauthorizedException('Token inválido o expirado (error genérico).');
