@@ -6,13 +6,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: [
-      'http://localhost:5173', 
-      'https://modern-pc-store.vercel.app' 
-    ],
+    origin: true, 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,
-    allowedHeaders: 'Content-Type, Authorization, Accept', 
+    credentials: true, 
+    allowedHeaders: 'Content-Type, Authorization, Accept, Origin, X-Requested-With', 
+    exposedHeaders: 'Content-Length, Content-Range', 
   });
 
   app.useGlobalPipes(new ValidationPipe({
@@ -25,7 +23,7 @@ async function bootstrap() {
   }));
 
   const port = process.env.PORT || 3000;
-  await app.listen(port, '0.0.0.0'); 
+  await app.listen(port, '0.0.0.0');
   console.log(`🚀 Servidor NestJS corriendo en: http://localhost:${port} y accesible externamente en el puerto ${port}`);
 }
 bootstrap();
