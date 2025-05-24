@@ -1,26 +1,31 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common'; 
+import { ValidationPipe } from '@nestjs/common';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: 'http://localhost:5173', 
+    origin: [
+      'http://localhost:5173', 
+      'https://PROYECTO.vercel.app' 
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true, 
+    credentials: true,
+    allowedHeaders: 'Content-Type, Authorization, Accept', 
   });
 
   app.useGlobalPipes(new ValidationPipe({
-    whitelist: true, 
-    forbidNonWhitelisted: true, 
-    transform: true, 
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
     transformOptions: {
-      enableImplicitConversion: true, 
+      enableImplicitConversion: true,
     },
   }));
-  
-  const port = process.env.PORT || 3000;  
-  await app.listen(port);
-  console.log(`🚀 Servidor NestJS corriendo en: http://localhost:${port}`);
+
+  const port = process.env.PORT || 3000;
+  await app.listen(port, '0.0.0.0'); 
+  console.log(`🚀 Servidor NestJS corriendo en: http://localhost:${port} y accesible externamente en el puerto ${port}`);
 }
 bootstrap();
