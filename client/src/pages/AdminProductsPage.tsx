@@ -159,7 +159,7 @@ const AdminProductsPage = () => {
 
 
     const url = editingProduct 
-      ? `${import.meta.env.VITE_API_BASE_URLL}/products/${editingProduct.id}` 
+      ? `${import.meta.env.VITE_API_BASE_URL}/products/${editingProduct.id}` 
       : `${import.meta.env.VITE_API_BASE_URL}/products`;
     const method = editingProduct ? 'PATCH' : 'POST';
     const successMessage = editingProduct ? 'Producto actualizado con éxito.' : 'Producto creado con éxito.';
