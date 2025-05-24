@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import StyledInput from '../components/Forms/StyledInput';
 import { FiUser, FiMail, FiLock, FiUserPlus, FiLoader  } from 'react-icons/fi';
 
+
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -31,8 +32,16 @@ const RegisterPage = () => {
 
     setIsLoading(true);
 
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+    const registrationUrl = `${apiUrl}/auth/register`; 
+
+    const DEBUG_VERSION = "REGISTER_PAGE_TEST_003"; 
+    console.log(DEBUG_VERSION, "URL de Registro Usada en handleSubmit:", registrationUrl);
+    console.log(DEBUG_VERSION, "Valor de VITE_API_BASE_URL en handleSubmit:", import.meta.env.VITE_API_BASE_URL);
+    console.log(DEBUG_VERSION, "Todas las env de Vite en handleSubmit:", JSON.stringify(import.meta.env));
+
     try {
-      const response = await fetch('http://localhost:3000/auth/register', {
+      const response = await fetch(registrationUrl, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, firstName, lastName }),
@@ -49,7 +58,13 @@ const RegisterPage = () => {
       navigate('/'); 
       
     } catch (err: any) {
-      setError(err.message || 'Ocurrió un error inesperado.');
+      if (err instanceof TypeError && err.message === "Failed to fetch") { 
+          console.error(DEBUG_VERSION, "FALLO DE RED al intentar fetch a:", registrationUrl, "Error original:", err);
+          setError(`Error de red al conectar con el servidor. Verifica que la URL (${registrationUrl}) sea correcta y el servidor esté accesible.`);
+      } else {
+          setError(err.message || 'Ocurrió un error inesperado.');
+      }
+      console.error(DEBUG_VERSION, "Error en handleSubmit:", err); 
     } finally {
       setIsLoading(false);
     }
@@ -99,7 +114,7 @@ const RegisterPage = () => {
             />
           </div>
           <StyledInput
-            id="email-register" // Diferente id para evitar conflictos con login si estuvieran en la misma página (no es el caso)
+            id="email-register"
             label="Correo Electrónico"
             type="email"
             autoComplete="email"
