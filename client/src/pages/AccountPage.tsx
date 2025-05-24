@@ -5,7 +5,6 @@ import {
   FiLogOut, FiChevronDown, FiChevronUp, 
   FiLoader, FiAlertCircle, FiImage 
 } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
 
 interface OrderItemProduct {
   id: string;
@@ -31,52 +30,6 @@ interface Order {
   items: OrderItem[];
 }
 
-interface ActionButtonProps {
-  Icon: React.ElementType;
-  text: string;
-  onClick?: () => void;
-  disabled?: boolean;
-  isLink?: boolean;
-  to?: string;
-  isLoading?: boolean;
-}
-
-const ActionButton: React.FC<ActionButtonProps> = ({ Icon, text, onClick, disabled, isLink, to, isLoading }) => {
-  const commonClasses = `w-full flex items-center justify-between px-6 py-4 bg-[var(--color-bg-tertiary)] hover:bg-[var(--color-text-muted)]/20 rounded-[var(--border-radius-default)] transition-colors duration-200 ease-in-out`;
-  const disabledClasses = `opacity-50 cursor-not-allowed`;
-
-  const content = (
-    <>
-      <div className="flex items-center">
-        {isLoading ? (
-            <FiLoader className="animate-spin h-5 w-5 mr-3 text-[var(--color-amd-red)]" />
-        ) : (
-            <Icon className="h-5 w-5 mr-3 text-[var(--color-amd-red)]" />
-        )}
-        <span className="text-sm font-medium text-[var(--color-text-primary)]">{text}</span>
-      </div>
-    
-    </>
-  );
-
-  if (isLink && to && !disabled) {
-    return (
-      <Link to={to} className={`${commonClasses} ${disabled ? disabledClasses : ''}`}>
-        {content}
-      </Link>
-    );
-  }
-
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled || isLoading}
-      className={`${commonClasses} ${disabled || isLoading ? disabledClasses : ''}`}
-    >
-      {content}
-    </button>
-  );
-};
 
 const AccountPage = () => {
   const { user, logout, token } = useAuth();
