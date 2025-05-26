@@ -85,6 +85,14 @@ A modern and sleek prototype web store for computer components, focused on AMD p
     *   [bcrypt](https://www.npmjs.com/package/bcrypt)
     *   `class-validator`, `class-transformer`
     *   `@nestjs/config`
+ 
+## 🚀 Live Demo
+
+You can try out a deployed version of the application here!
+
+➡️ **[Explore AMD PCStore on Vercel](https://modern-pc-store.vercel.app/)** ⬅️
+
+*(Note: The demo's backend is deployed on Render and might enter a sleep mode if it doesn't receive traffic. The first load or action might take a few extra seconds while the service "wakes up".)*
 
 ## ⚙️ Setup and Local Execution
 
@@ -95,7 +103,14 @@ A modern and sleek prototype web store for computer components, focused on AMD p
 *   [Git](https://git-scm.com/)
 *   A running and accessible instance of **PostgreSQL**.
 
-### Installation Steps
+### Prerequisites
+
+*   [Node.js](https://nodejs.org/) (v18.x or v20.x recommended)
+*   [npm](https://www.npmjs.com/) (or Yarn)
+*   [Git](https://git-scm.com/)
+*   A running and accessible instance of **PostgreSQL**.
+
+### Local Installation Steps
 
 1.  **Clone the repository:**
     ```bash
@@ -103,49 +118,67 @@ A modern and sleek prototype web store for computer components, focused on AMD p
     cd modern-pc-store
     ```
 
-2.  **Backend Setup:**
+2.  **Backend Setup (`server/`):**
     *   Navigate to the server folder:
         ```bash
         cd server
         ```
     *   **Create the `.env` file:**
-        From PowerShell, inside the `server/` folder, run:
+        From PowerShell (or your preferred terminal) inside the `server/` folder, create the file:
         ```powershell
+        # In PowerShell
         New-Item .env
+        # In Bash (Linux/macOS/Git Bash)
+        # touch .env
         ```
-        Then, open the newly created `.env` file with a text editor (like VS Code, Notepad, etc.) and paste the following content, **making sure to replace the placeholder values with your actual credentials and secrets**:
+        Then, open the newly created `.env` file with a text editor (like VS Code, Notepad, etc.) and paste the following content, **making sure to replace the placeholder values with your actual local PostgreSQL credentials and a unique JWT secret**:
         ```env
         # PostgreSQL Configuration
         DB_TYPE=postgres
         DB_HOST=localhost
         DB_PORT=5432
-        DB_USERNAME=your_postgres_user
+        DB_USERNAME=your_postgres_user # e.g., postgres
         DB_PASSWORD=your_postgres_password
-        DB_DATABASE=modern_pc_store_db # Or the name you gave to your DB
-        DB_SYNCHRONIZE=true # For development
+        DB_DATABASE=modern_pc_store_db # Or the name you gave your local DB
+        DB_SYNCHRONIZE=true # Ideal for development, consider false for production
 
         # JWT Configuration
-        JWT_SECRET=YOUR_UNIQUE_AND_LONG_SUPER_SECRET_JWT_HERE
+        JWT_SECRET=CHANGE_THIS_TO_A_UNIQUE_AND_LONG_RANDOM_JWT_SECRET
         JWT_EXPIRATION_TIME=3600s # e.g., 1 hour (you can use s, m, h, d)
         ```
-        **Important:** Do not include quotes around the values in the `.env` file unless they are part of the value itself (they usually aren't for secrets or usernames).
+        **Important:** Do not use quotes around the values in the `.env` file unless they are explicitly part of the value itself (they usually aren't for secrets or usernames).
     *   Install backend dependencies:
         ```bash
         npm install
         ```
 
-3.  **Frontend Setup:**
+3.  **Frontend Setup (`client/`):**
     *   Navigate to the client folder:
         ```bash
         cd ../client
-        # (If you were in server/, otherwise cd client/ from the root)
+        # (If you were in server/, otherwise cd client/ from the project root)
+        ```
+    *   **Create the local environment file `.env.local`:**
+        The repository includes a `client/.env.example` file. You can copy it:
+        ```powershell
+        # In PowerShell (inside the client/ folder)
+        Copy-Item .env.example .env.local
+        # In Bash (inside the client/ folder)
+        # cp .env.example .env.local
+        ```
+        The content of `client/.env.local` should be:
+        ```env
+        # client/.env.local
+        VITE_API_BASE_URL=http://localhost:3000
+        # If your NestJS backend has a global prefix like '/api', include it:
+        # VITE_API_BASE_URL=http://localhost:3000/api
         ```
     *   Install frontend dependencies:
         ```bash
         npm install
         ```
 
-### Running the Application
+### Running the Application Locally
 
 1.  **Start the Backend Server:**
     From the `server/` folder (in one terminal):
@@ -161,7 +194,18 @@ A modern and sleek prototype web store for computer components, focused on AMD p
     ```
     The frontend application will be available at `http://localhost:5173` (or the port Vite assigns).
 
-Open your browser and go to the frontend URL to explore the store. To access admin functionalities, you will need to register a user and then modify their role to 'admin' directly in the PostgreSQL database (e.g., `UPDATE users SET roles = ARRAY['admin', 'user'] WHERE email = 'your_admin_email@example.com';` using `psql` or a database GUI tool).
+Open your browser and navigate to the frontend URL to explore the store.
+
+### Admin Credentials for Local Demo
+
+To access admin functionalities locally:
+1.  Register a new user through the application's interface.
+2.  Connect to your PostgreSQL database and update that user's role to 'admin'. Example SQL query (replace the email):
+    ```sql
+    UPDATE users SET roles = ARRAY['admin', 'user']::users_roles_enum[] WHERE email = 'your_admin_email@example.com';
+    ```
+    *(Note: The exact enum type `users_roles_enum` might vary slightly if TypeORM generated it with a different name. Check with `\dT` in `psql` if unsure.)*
+
 
 ## 📄 License
 
