@@ -10,26 +10,22 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     UsersModule,
     ConfigModule, 
     JwtModule.registerAsync({
-      useFactory: async () => { 
-        const jwtSecret = process.env.JWT_SECRET;
-        const jwtExpiration = process.env.JWT_EXPIRATION_TIME;
+      imports: [ConfigModule], 
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const jwtSecret = configService.get<string>('JWT_SECRET'); 
+        const jwtExpiration = configService.get<string>('JWT_EXPIRATION_TIME'); 
+        
+        console.log('[AuthModule] JWT_SECRET desde ConfigService:', jwtSecret);
+        console.log('[AuthModule] JWT_EXPIRATION_TIME desde ConfigService:', jwtExpiration);
 
-        console.log('[AuthModule] JWT_SECRET desde process.env:', jwtSecret);
-        console.log('[AuthModule] JWT_EXPIRATION_TIME desde process.env:', jwtExpiration);
-
-        if (!jwtSecret) {
-          console.error('[AuthModule] ERROR CRÍTICO: JWT_SECRET (desde process.env) es undefined o vacío.');
-          throw new Error('JWT_SECRET no está definido en las variables de entorno (process.env).');
+        if (!jwtSecret || !jwtExpiration) {
+          throw new Error('ConfigService no pudo leer JWT_SECRET o JWT_EXPIRATION_TIME del archivo .env');
         }
-        if (!jwtExpiration) {
-          console.error('[AuthModule] ERROR CRÍTICO: JWT_EXPIRATION_TIME (desde process.env) es undefined o vacío.');
-          throw new Error('JWT_EXPIRATION_TIME no está definido en las variables de entorno (process.env).');
-        }
-
         return {
           secret: jwtSecret,
           signOptions: {
-            expiresIn: jwtExpiration, 
+            expiresIn: jwtExpiration,
           },
         };
       },
@@ -37,6 +33,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   ],
   controllers: [AuthController],
   providers: [AuthService], 
-  exports: [AuthService, JwtModule], 
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}
